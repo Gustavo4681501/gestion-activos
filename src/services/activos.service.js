@@ -86,3 +86,49 @@ export const eliminarActivo = async id => {
     throw new Error("No se pudo eliminar el activo")
   }
 }
+
+export const registrarPrestamo = async (activoId, prestamoData) => {
+  try {
+    const ref = doc(db, "activos", activoId)
+    await updateDoc(ref, {
+      prestamoActivo: {
+        ...prestamoData,
+        fechaPrestamo: Timestamp.now(),
+      },
+      estado: "prestado",
+      ultimaActualizacion: Timestamp.now(),
+    })
+  } catch (e) {
+    console.error("[activos.service] registrarPrestamo:", e)
+    throw new Error("No se pudo registrar el préstamo")
+  }
+}
+
+export const devolverPrestamo = async (activoId, notasDevolucion = null) => {
+  try {
+    const ref = doc(db, "activos", activoId)
+    const snap = await getDoc(ref)
+    if (!snap.exists()) throw new Error("Activo no encontrado")
+    const activo = snap.data()
+    if (!activo.prestamoActivo) throw new Error("No hay préstamo activo")
+
+    const prestamoFinalizado = {
+      ...activo.prestamoActivo,
+      fechaDevolucion: Timestamp.now(),
+      notasDevolucion: notasDevolucion || null,
+    }
+
+    await updateDoc(ref, {
+      prestamoActivo: null,
+      historial_prestamos: [
+        ...(activo.historial_prestamos || []),
+        prestamoFinalizado,
+      ],
+      estado: "en_bodega",
+      ultimaActualizacion: Timestamp.now(),
+    })
+  } catch (e) {
+    console.error("[activos.service] devolverPrestamo:", e)
+    throw new Error("No se pudo registrar la devolución")
+  }
+}

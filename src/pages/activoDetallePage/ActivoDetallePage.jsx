@@ -5,14 +5,15 @@ import { Timestamp } from "firebase/firestore"
 import {
   obtenerActivo,
   actualizarActivo,
-  agregarPropietario
+  agregarPropietario,
+  registrarPrestamo,
+  devolverPrestamo,
 } from "../../services/activos.service"
 import ModalFirma from "../../components/ModalFirma"
 import { useToast } from "../../components/Toast"
 import { ESTADO_LABELS } from "../../utils/estados"
+import { getAccesorios } from "../../utils/accesorios"
 import "./ActivoDetallePage.css"
-
-const ACCESORIO_BOOL_KEYS = ["estuche", "bateria", "cable", "temperado", "cargador", "linea"]
 
 export default function ActivoDetallePage() {
   const { id } = useParams()
@@ -32,6 +33,14 @@ export default function ActivoDetallePage() {
   const [lineaPlan, setLineaPlan] = useState(false)
   const [nombreInput, setNombreInput] = useState("")
   const [idInput, setIdInput] = useState("")
+
+  // Préstamos
+  const [prestamoNombre, setPrestamoNombre] = useState("")
+  const [prestamoId, setPrestamoId] = useState("")
+  const [prestamoFechaEsperada, setPrestamoFechaEsperada] = useState("")
+  const [prestamoObservaciones, setPrestamoObservaciones] = useState("")
+  const [mostrarFormDevolucion, setMostrarFormDevolucion] = useState(false)
+  const [notasDevolucion, setNotasDevolucion] = useState("")
 
   const cargarActivo = useCallback(async () => {
     try {
@@ -67,12 +76,10 @@ export default function ActivoDetallePage() {
   const guardarAccesorios = async () => {
     setLoading(true)
     try {
+      const tieneLinea = getAccesorios(activo.categoria).some(a => a.esLinea)
+      const lineaData = tieneLinea && accesorios.linea ? { lineaNumero, lineaPlan } : {}
       await actualizarActivo(id, {
-        accesorios: {
-          ...accesorios,
-          lineaNumero: accesorios.linea ? lineaNumero : null,
-          lineaPlan: accesorios.linea ? lineaPlan : null,
-        }
+        accesorios: { ...accesorios, ...lineaData }
       })
       setEditandoAccesorios(false)
       showToast("Accesorios actualizados correctamente", "success")
@@ -108,6 +115,49 @@ export default function ActivoDetallePage() {
       await cargarActivo()
     } catch (e) {
       showToast(e.message, "error")
+    }
+  }
+
+  const handleRegistrarPrestamo = async () => {
+    if (!prestamoNombre.trim()) {
+      showToast("Ingresa el nombre del prestatario", "warning")
+      return
+    }
+    setLoading(true)
+    try {
+      await registrarPrestamo(id, {
+        nombre: prestamoNombre.trim(),
+        identificacion: prestamoId.trim() || null,
+        fechaDevolucionEsperada: prestamoFechaEsperada
+          ? Timestamp.fromDate(new Date(prestamoFechaEsperada + "T12:00:00"))
+          : null,
+        observaciones: prestamoObservaciones.trim() || null,
+      })
+      setPrestamoNombre("")
+      setPrestamoId("")
+      setPrestamoFechaEsperada("")
+      setPrestamoObservaciones("")
+      showToast("Préstamo registrado correctamente", "success")
+      await cargarActivo()
+    } catch (e) {
+      showToast(e.message, "error")
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleDevolverPrestamo = async () => {
+    setLoading(true)
+    try {
+      await devolverPrestamo(id, notasDevolucion.trim() || null)
+      setMostrarFormDevolucion(false)
+      setNotasDevolucion("")
+      showToast("Devolución registrada correctamente", "success")
+      await cargarActivo()
+    } catch (e) {
+      showToast(e.message, "error")
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -186,17 +236,31 @@ export default function ActivoDetallePage() {
           {editandoAccesorios ? (
             <>
               <div className="accesorios-grid">
-                {ACCESORIO_BOOL_KEYS.filter(a => a in accesorios).map(a => (
-                  <div key={a} style={{ display: "flex", flexDirection: "column" }}>
+                {getAccesorios(activo.categoria).map(({ key, label, esLinea }) => (
+                  <div key={key} className={`accesorio-item${esLinea && accesorios[key] ? " accesorio-item--expanded" : ""}`}>
                     <label>
-                      <input type="checkbox" checked={accesorios[a]} onChange={() => setAccesorios(p => ({ ...p, [a]: !p[a] }))} />
-                      {a.toUpperCase()}
+                      <input
+                        type="checkbox"
+                        checked={accesorios[key] ?? false}
+                        onChange={() => setAccesorios(p => ({ ...p, [key]: !p[key] }))}
+                      />
+                      {label}
                     </label>
-                    {a === "linea" && accesorios.linea && (
-                      <div style={{ marginTop: "0.5rem" }}>
-                        <input type="text" className="form-control mb-2" placeholder="Número de línea" value={lineaNumero} onChange={e => setLineaNumero(e.target.value)} />
-                        <label style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                          <input type="checkbox" checked={lineaPlan} onChange={e => setLineaPlan(e.target.checked)} />
+                    {esLinea && accesorios[key] && (
+                      <div className="linea-extra">
+                        <input
+                          type="text"
+                          className="form-input"
+                          placeholder="Número de línea"
+                          value={lineaNumero}
+                          onChange={e => setLineaNumero(e.target.value)}
+                        />
+                        <label>
+                          <input
+                            type="checkbox"
+                            checked={lineaPlan}
+                            onChange={e => setLineaPlan(e.target.checked)}
+                          />
                           Con plan
                         </label>
                       </div>
@@ -208,8 +272,10 @@ export default function ActivoDetallePage() {
             </>
           ) : (
             <div className="accesorios-chips">
-              {Object.entries(accesorios).map(([k, v]) => (
-                <span key={k} className={`chip ${v ? "on" : "off"}`}>{k.toUpperCase()}</span>
+              {getAccesorios(activo.categoria).map(({ key, label }) => (
+                <span key={key} className={`chip ${accesorios[key] ? "on" : "off"}`}>
+                  {label}
+                </span>
               ))}
             </div>
           )}
@@ -260,6 +326,188 @@ export default function ActivoDetallePage() {
             <p className="text-muted">No hay historial de propietarios</p>
           )}
         </div>
+
+        {/* ===== PRÉSTAMOS ===== */}
+        {(() => {
+          const prestamo = activo.prestamoActivo
+          const ahora = new Date()
+          const esVencido = prestamo?.fechaDevolucionEsperada &&
+            prestamo.fechaDevolucionEsperada.toDate() < ahora
+
+          return (
+            <>
+              {/* Banner préstamo activo */}
+              {prestamo ? (
+                <div className={`prestamo-banner ${esVencido ? "vencido" : "activo"}`}>
+                  <div className="prestamo-banner-header">
+                    <span className={`prestamo-badge ${esVencido ? "vencido" : "activo"}`}>
+                      {esVencido ? "⚠️ Préstamo vencido" : "📤 Préstamo activo"}
+                    </span>
+                    {!mostrarFormDevolucion && (
+                      <button
+                        className="btn-devolver"
+                        onClick={() => setMostrarFormDevolucion(true)}
+                        disabled={loading}
+                      >
+                        ✅ Registrar devolución
+                      </button>
+                    )}
+                  </div>
+
+                  <div className="prestamo-banner-body">
+                    <div className="prestamo-dato">
+                      <small>Prestatario</small>
+                      <strong>{prestamo.nombre}</strong>
+                      {prestamo.identificacion && <span>{prestamo.identificacion}</span>}
+                    </div>
+                    <div className="prestamo-dato">
+                      <small>Fecha de préstamo</small>
+                      <span>{prestamo.fechaPrestamo?.toDate().toLocaleDateString("es-CR", { day: "2-digit", month: "short", year: "numeric" })}</span>
+                    </div>
+                    {prestamo.fechaDevolucionEsperada && (
+                      <div className="prestamo-dato">
+                        <small>Devolución esperada</small>
+                        <span style={{ color: esVencido ? "#dc3545" : "inherit", fontWeight: esVencido ? 700 : 400 }}>
+                          {prestamo.fechaDevolucionEsperada.toDate().toLocaleDateString("es-CR", { day: "2-digit", month: "short", year: "numeric" })}
+                        </span>
+                      </div>
+                    )}
+                    {prestamo.observaciones && (
+                      <div className="prestamo-dato">
+                        <small>Observaciones</small>
+                        <span>{prestamo.observaciones}</span>
+                      </div>
+                    )}
+                  </div>
+
+                  {esVencido && (
+                    <div className="prestamo-vencido-alerta">
+                      ⚠️ Este activo debió devolverse hace{" "}
+                      {Math.floor((ahora - prestamo.fechaDevolucionEsperada.toDate()) / 86400000)} día(s)
+                    </div>
+                  )}
+
+                  {mostrarFormDevolucion && (
+                    <div className="prestamo-devolucion-form">
+                      <p style={{ margin: 0, fontWeight: 600, fontSize: "0.875rem" }}>
+                        Confirmar devolución de {prestamo.nombre}
+                      </p>
+                      <textarea
+                        className="form-input form-textarea"
+                        placeholder="Notas de devolución (estado del activo, observaciones...)"
+                        value={notasDevolucion}
+                        onChange={e => setNotasDevolucion(e.target.value)}
+                        style={{ minHeight: 70 }}
+                      />
+                      <div className="prestamo-devolucion-actions">
+                        <button
+                          className="btn-secondary"
+                          onClick={() => { setMostrarFormDevolucion(false); setNotasDevolucion("") }}
+                        >
+                          Cancelar
+                        </button>
+                        <button
+                          className="btn-devolver"
+                          onClick={handleDevolverPrestamo}
+                          disabled={loading}
+                        >
+                          Confirmar devolución
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                /* Formulario para nuevo préstamo */
+                <div className="card-detalle">
+                  <h4 className="mb-3">Registrar préstamo</h4>
+                  <div className="prestamo-nuevo-form">
+                    <div className="form-row">
+                      <input
+                        className="form-input"
+                        placeholder="Nombre del prestatario *"
+                        value={prestamoNombre}
+                        onChange={e => setPrestamoNombre(e.target.value)}
+                      />
+                      <input
+                        className="form-input"
+                        placeholder="Identificación (opcional)"
+                        value={prestamoId}
+                        onChange={e => setPrestamoId(e.target.value)}
+                      />
+                    </div>
+                    <div className="form-row">
+                      <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                        <label style={{ fontSize: "0.78rem", color: "var(--color-muted)", fontWeight: 600 }}>
+                          Fecha de devolución esperada
+                        </label>
+                        <input
+                          type="date"
+                          className="form-input"
+                          value={prestamoFechaEsperada}
+                          min={new Date().toISOString().split("T")[0]}
+                          onChange={e => setPrestamoFechaEsperada(e.target.value)}
+                        />
+                      </div>
+                      <textarea
+                        className="form-input"
+                        placeholder="Observaciones (opcional)"
+                        value={prestamoObservaciones}
+                        onChange={e => setPrestamoObservaciones(e.target.value)}
+                        style={{ minHeight: 60, resize: "vertical" }}
+                      />
+                    </div>
+                    <button
+                      className="btn btn-primary"
+                      onClick={handleRegistrarPrestamo}
+                      disabled={loading}
+                      style={{ alignSelf: "flex-start" }}
+                    >
+                      📤 Registrar préstamo
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* Historial de préstamos */}
+              {activo.historial_prestamos?.length > 0 && (
+                <div className="card-detalle">
+                  <h4 className="mb-3">Historial de préstamos</h4>
+                  <div className="historial-prestamos-grid">
+                    {activo.historial_prestamos.map((p, i) => {
+                      const diasPrestado = p.fechaDevolucion && p.fechaPrestamo
+                        ? Math.round((p.fechaDevolucion.toDate() - p.fechaPrestamo.toDate()) / 86400000)
+                        : null
+                      return (
+                        <div key={i} className="historial-prestamo-card devuelto">
+                          <div>
+                            <div className="historial-prestamo-nombre">{p.nombre}</div>
+                            {p.identificacion && (
+                              <div className="historial-prestamo-id">{p.identificacion}</div>
+                            )}
+                            <div className="historial-prestamo-fechas">
+                              <span>📤 {p.fechaPrestamo?.toDate().toLocaleDateString("es-CR")}</span>
+                              <span>📥 {p.fechaDevolucion?.toDate().toLocaleDateString("es-CR")}</span>
+                            </div>
+                            {p.notasDevolucion && (
+                              <div className="historial-prestamo-notas">"{p.notasDevolucion}"</div>
+                            )}
+                          </div>
+                          {diasPrestado !== null && (
+                            <div className="historial-prestamo-duracion">
+                              {diasPrestado === 0 ? "Mismo día" : `${diasPrestado} día${diasPrestado !== 1 ? "s" : ""}`}
+                            </div>
+                          )}
+                        </div>
+                      )
+                    })}
+                  </div>
+                </div>
+              )}
+            </>
+          )
+        })()}
+
       </div>
     </div>
   )

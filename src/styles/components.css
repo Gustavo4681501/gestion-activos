@@ -372,6 +372,23 @@
   background: var(--color-border);
 }
 
+.accesorio-item input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--color-primary);
+  flex-shrink: 0;
+}
+
+/* El input de texto dentro de linea-extra no hereda el tamaño del checkbox */
+.linea-extra .form-input {
+  width: 100%;
+  min-width: 0;
+}
+
+.accesorio-item--expanded {
+  grid-column: 1 / -1;
+}
+
 .linea-extra {
   margin-top: 8px;
   display: flex;
@@ -432,6 +449,211 @@
 
 .btn-secondary:hover {
   background: #d3d8dd;
+}
+
+/* ===== PRÉSTAMOS ===== */
+.prestamo-banner {
+  padding: 1.4rem 1.6rem;
+  border-radius: 14px;
+  margin-bottom: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.prestamo-banner.activo {
+  background: #fff8e1;
+  border-left: 5px solid #f59e0b;
+}
+
+.prestamo-banner.vencido {
+  background: #fef2f2;
+  border-left: 5px solid #dc3545;
+}
+
+.prestamo-banner-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.prestamo-badge {
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+
+.prestamo-badge.activo {
+  background: #f59e0b;
+  color: white;
+}
+
+.prestamo-badge.vencido {
+  background: #dc3545;
+  color: white;
+}
+
+.prestamo-banner-body {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 8px 20px;
+}
+
+.prestamo-dato {
+  display: flex;
+  flex-direction: column;
+}
+
+.prestamo-dato small {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #92400e;
+  font-weight: 600;
+}
+
+.prestamo-banner.vencido .prestamo-dato small {
+  color: #991b1b;
+}
+
+.prestamo-dato strong {
+  font-size: 0.9rem;
+  color: #1a1a2e;
+}
+
+.prestamo-dato span {
+  font-size: 0.85rem;
+  color: #374151;
+}
+
+.prestamo-vencido-alerta {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #dc3545;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.prestamo-devolucion-form {
+  background: white;
+  border: 1px solid #fcd34d;
+  border-radius: 10px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.prestamo-devolucion-form textarea {
+  resize: vertical;
+  min-height: 70px;
+}
+
+.prestamo-devolucion-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-devolver {
+  padding: 8px 18px;
+  background: #dc3545;
+  color: white;
+  border: none;
+  border-radius: var(--radius-btn);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s;
+}
+
+.btn-devolver:hover:not(:disabled) {
+  background: #b91c1c;
+}
+
+.btn-devolver:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Sección de registrar préstamo */
+.prestamo-nuevo-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.prestamo-nuevo-form .form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+/* Historial de préstamos */
+.historial-prestamos-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.historial-prestamo-card {
+  background: #f8f9fa;
+  border-radius: 10px;
+  padding: 14px 16px;
+  border-left: 4px solid #6610f2;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+  align-items: start;
+}
+
+.historial-prestamo-card.devuelto {
+  border-left-color: #28a745;
+}
+
+.historial-prestamo-nombre {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: #1a1a2e;
+}
+
+.historial-prestamo-id {
+  font-size: 0.78rem;
+  color: #6c757d;
+}
+
+.historial-prestamo-fechas {
+  font-size: 0.78rem;
+  color: #374151;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 4px;
+}
+
+.historial-prestamo-duracion {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 20px;
+  background: #e0e7ff;
+  color: #3730a3;
+  white-space: nowrap;
+  align-self: flex-start;
+}
+
+.historial-prestamo-notas {
+  font-size: 0.78rem;
+  color: #6c757d;
+  font-style: italic;
+  grid-column: 1 / -1;
+  margin-top: 2px;
 }
 
 /* ===== RESPONSIVE ===== */

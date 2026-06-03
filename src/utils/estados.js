@@ -6,6 +6,7 @@ export const ESTADO_LABELS = {
   en_reparacion: "En reparación",
   baja: "Baja",
   reservado: "Reservado",
+  prestado: "Prestado",
 }
 
 export const ESTADO_COLORS = {
@@ -15,4 +16,5 @@ export const ESTADO_COLORS = {
   en_reparacion: "#ffc107",
   baja: "#6c757d",
   reservado: "#17a2b8",
+  prestado: "#6610f2",
 }

@@ -1,0 +1,108 @@
+<h2>¿Cómo debe organizarse la página principal?</h2>
+<p class="subtitle">Actualmente el formulario de registro y la lista de activos conviven en la misma página. ¿Cómo prefieres reorganizarlos?</p>
+
+<div class="cards">
+
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="font-family:monospace;font-size:0.78rem;padding:12px;background:#f8f9fa;border-radius:8px;line-height:1.8">
+        <div style="background:#0d6efd;color:white;padding:6px 12px;border-radius:6px;margin-bottom:8px;font-weight:600">📊 Dashboard de activos IT</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:8px">
+          <div style="background:#e8f5e9;padding:6px;border-radius:6px;text-align:center;border-left:3px solid #28a745"><small>Total</small><br/><strong>124</strong></div>
+          <div style="background:#e3f2fd;padding:6px;border-radius:6px;text-align:center;border-left:3px solid #007bff"><small>Asignados</small><br/><strong>98</strong></div>
+          <div style="background:#fff3e0;padding:6px;border-radius:6px;text-align:center;border-left:3px solid #ffc107"><small>En bodega</small><br/><strong>26</strong></div>
+        </div>
+        <div style="display:flex;gap:6px;margin-bottom:8px">
+          <input style="flex:1;padding:5px 8px;border:1px solid #ccc;border-radius:6px;font-size:0.75rem" placeholder="🔍 Buscar serial, marca..."/>
+          <select style="padding:5px;border:1px solid #ccc;border-radius:6px;font-size:0.75rem"><option>Estado ▾</option></select>
+          <select style="padding:5px;border:1px solid #ccc;border-radius:6px;font-size:0.75rem"><option>Tipo ▾</option></select>
+          <button style="background:#0d6efd;color:white;border:none;padding:5px 10px;border-radius:6px;font-size:0.75rem;cursor:pointer">+ Nuevo</button>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+          <div style="background:white;padding:8px;border-radius:8px;border:1px solid #e0e0e0;font-size:0.72rem">
+            <strong>Samsung A54</strong> · <span style="background:#28a745;color:white;padding:1px 6px;border-radius:10px;font-size:0.65rem">Asignado</span><br/>
+            <span style="color:#777">Serial: SN-001 · Juan P.</span>
+          </div>
+          <div style="background:white;padding:8px;border-radius:8px;border:1px solid #e0e0e0;font-size:0.72rem">
+            <strong>Laptop HP</strong> · <span style="background:#007bff;color:white;padding:1px 6px;border-radius:10px;font-size:0.65rem">En bodega</span><br/>
+            <span style="color:#777">Serial: SN-002 · Sin asignar</span>
+          </div>
+        </div>
+        <div style="text-align:center;margin-top:6px;color:#aaa;font-size:0.7rem">+ 120 activos más...</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A — Dashboard con estadísticas</h3>
+      <p>Página principal con tarjetas de resumen, barra de búsqueda + filtros, y grid de activos. El formulario de "Nuevo activo" se abre en un <strong>modal</strong> al presionar el botón.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="font-family:monospace;font-size:0.78rem;padding:12px;background:#f8f9fa;border-radius:8px;line-height:1.8">
+        <div style="display:flex;gap:8px;height:160px">
+          <div style="width:160px;background:#1e2a3a;color:white;border-radius:8px;padding:10px;flex-shrink:0">
+            <div style="font-weight:700;margin-bottom:10px;font-size:0.8rem">🖥️ IT Assets</div>
+            <div style="font-size:0.72rem;padding:4px 8px;border-radius:4px;background:rgba(255,255,255,0.15);margin-bottom:4px">📋 Todos los activos</div>
+            <div style="font-size:0.72rem;padding:4px 8px;margin-bottom:4px;color:rgba(255,255,255,0.6)">📱 Celulares</div>
+            <div style="font-size:0.72rem;padding:4px 8px;margin-bottom:4px;color:rgba(255,255,255,0.6)">💻 Laptops</div>
+            <div style="font-size:0.72rem;padding:4px 8px;margin-bottom:4px;color:rgba(255,255,255,0.6)">🖥️ PCs</div>
+            <div style="font-size:0.72rem;padding:4px 8px;margin-bottom:4px;color:rgba(255,255,255,0.6)">📺 Monitores</div>
+            <div style="margin-top:auto;padding-top:8px;border-top:1px solid rgba(255,255,255,0.1)">
+              <div style="font-size:0.72rem;padding:4px 8px;background:#0d6efd;border-radius:4px;text-align:center;cursor:pointer">+ Nuevo activo</div>
+            </div>
+          </div>
+          <div style="flex:1">
+            <input style="width:100%;padding:5px 8px;border:1px solid #ccc;border-radius:6px;font-size:0.75rem;margin-bottom:6px" placeholder="🔍 Buscar..."/>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px">
+              <div style="background:white;padding:6px;border-radius:6px;border:1px solid #e0e0e0;font-size:0.7rem"><strong>Samsung A54</strong><br/><span style="color:#777">Juan P. · Asignado</span></div>
+              <div style="background:white;padding:6px;border-radius:6px;border:1px solid #e0e0e0;font-size:0.7rem"><strong>Laptop HP</strong><br/><span style="color:#777">Sin asignar · Bodega</span></div>
+              <div style="background:white;padding:6px;border-radius:6px;border:1px solid #e0e0e0;font-size:0.7rem"><strong>iPhone 13</strong><br/><span style="color:#777">María G. · Asignado</span></div>
+              <div style="background:white;padding:6px;border-radius:6px;border:1px solid #e0e0e0;font-size:0.7rem"><strong>Dell XPS</strong><br/><span style="color:#777">Sin asignar · Bodega</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B — Sidebar con categorías</h3>
+      <p>Navegación lateral con filtro por categoría de activo. Área principal muestra la lista filtrada con búsqueda. Formulario en modal. Ideal si hay muchas categorías.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="c" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="font-family:monospace;font-size:0.78rem;padding:12px;background:#f8f9fa;border-radius:8px;line-height:1.8">
+        <div style="background:#0d6efd;color:white;padding:6px 12px;border-radius:6px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center">
+          <span style="font-weight:600">🖥️ Gestión de Activos IT</span>
+          <button style="background:white;color:#0d6efd;border:none;padding:3px 10px;border-radius:4px;font-size:0.72rem;font-weight:600">+ Nuevo activo</button>
+        </div>
+        <div style="display:flex;gap:6px;margin-bottom:6px">
+          <input style="flex:1;padding:5px 8px;border:1px solid #ccc;border-radius:6px;font-size:0.75rem" placeholder="🔍 Buscar..."/>
+          <select style="padding:5px;border:1px solid #ccc;border-radius:6px;font-size:0.75rem"><option>Todos los estados</option></select>
+          <select style="padding:5px;border:1px solid #ccc;border-radius:6px;font-size:0.75rem"><option>Todas las categorías</option></select>
+        </div>
+        <table style="width:100%;border-collapse:collapse;font-size:0.72rem">
+          <thead>
+            <tr style="background:#e9ecef">
+              <th style="padding:4px 6px;text-align:left">Activo</th>
+              <th style="padding:4px 6px;text-align:left">Serial</th>
+              <th style="padding:4px 6px;text-align:left">Propietario</th>
+              <th style="padding:4px 6px;text-align:left">Estado</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid #eee"><td style="padding:4px 6px">Samsung A54</td><td style="padding:4px 6px">SN-001</td><td style="padding:4px 6px">Juan P.</td><td style="padding:4px 6px"><span style="background:#28a745;color:white;padding:1px 6px;border-radius:10px">Asignado</span></td></tr>
+            <tr style="border-bottom:1px solid #eee"><td style="padding:4px 6px">Laptop HP</td><td style="padding:4px 6px">SN-002</td><td style="padding:4px 6px">—</td><td style="padding:4px 6px"><span style="background:#007bff;color:white;padding:1px 6px;border-radius:10px">Bodega</span></td></tr>
+            <tr><td style="padding:4px 6px">iPhone 13</td><td style="padding:4px 6px">SN-003</td><td style="padding:4px 6px">María G.</td><td style="padding:4px 6px"><span style="background:#28a745;color:white;padding:1px 6px;border-radius:10px">Asignado</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C — Tabla con navbar superior</h3>
+      <p>Vista de tabla compacta (más activos visibles a la vez), navbar fijo en la parte superior, filtros en línea. Ideal para gestión masiva de registros.</p>
+    </div>
+  </div>
+
+</div>

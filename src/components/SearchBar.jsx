@@ -7,13 +7,16 @@ const ESTADOS = [
 ]
 
 const CATEGORIAS = [
-  { value: "",         label: "Todas las categorías" },
-  { value: "Celular",  label: "Celular" },
-  { value: "Laptop",   label: "Laptop" },
-  { value: "PC",       label: "PC" },
-  { value: "Tablet",   label: "Tablet" },
-  { value: "Monitor",  label: "Monitor" },
-  { value: "Otro",     label: "Otro" },
+  { value: "",                       label: "Todas las categorías" },
+  { value: "Celular",                label: "Celular" },
+  { value: "Laptop",                 label: "Laptop" },
+  { value: "PC",                     label: "PC" },
+  { value: "Tablet",                 label: "Tablet" },
+  { value: "Monitor",                label: "Monitor" },
+  { value: "Taladro",                label: "Taladro" },
+  { value: "Rotomartillo",           label: "Rotomartillo" },
+  { value: "Herramienta eléctrica",  label: "Herramienta eléctrica" },
+  { value: "Otro",                   label: "Otro" },
 ]
 
 export default function SearchBar({ filtros, onFiltrosChange, total }) {

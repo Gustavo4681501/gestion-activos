@@ -1,17 +1,8 @@
 // src/components/AssetForm.jsx
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import ModalFirma from "./ModalFirma"
 import { useToast } from "./Toast"
-
-const ACCESORIOS_INICIAL = {
-  estuche: false, bateria: false, cable: false,
-  temperado: false, cargador: false, linea: false
-}
-
-const ACCESORIO_LABELS = {
-  estuche: "Estuche", bateria: "Batería", cable: "Cable",
-  temperado: "Templado", cargador: "Cargador", linea: "Línea"
-}
+import { getAccesorios, getAccesoriosInicial } from "../utils/accesorios"
 
 export default function AssetForm({ onClose, onGuardar }) {
   const { showToast } = useToast()
@@ -25,7 +16,7 @@ export default function AssetForm({ onClose, onGuardar }) {
   const [estado, setEstado] = useState("asignado")
   const [observaciones, setObservaciones] = useState("")
   const [precio, setPrecio] = useState("")
-  const [accesorios, setAccesorios] = useState(ACCESORIOS_INICIAL)
+  const [accesorios, setAccesorios] = useState({})
   const [lineaNumero, setLineaNumero] = useState("")
   const [lineaPlan, setLineaPlan] = useState(false)
   const [asignarPropietario, setAsignarPropietario] = useState(false)
@@ -34,8 +25,15 @@ export default function AssetForm({ onClose, onGuardar }) {
   const [modalFirmaAbierto, setModalFirmaAbierto] = useState(false)
   const [guardando, setGuardando] = useState(false)
 
-  const toggleAccesorio = name =>
-    setAccesorios(prev => ({ ...prev, [name]: !prev[name] }))
+  // Al cambiar categoría, reiniciar accesorios al set correspondiente
+  useEffect(() => {
+    setAccesorios(getAccesoriosInicial(categoria))
+    setLineaNumero("")
+    setLineaPlan(false)
+  }, [categoria])
+
+  const toggleAccesorio = key =>
+    setAccesorios(prev => ({ ...prev, [key]: !prev[key] }))
 
   const validar = () => {
     const catFinal = categoria === "Otro" ? otraCategoria : categoria
@@ -51,7 +49,8 @@ export default function AssetForm({ onClose, onGuardar }) {
       showToast("Ingresa el nombre del propietario", "warning")
       return false
     }
-    if (accesorios.linea && !lineaNumero) {
+    const tieneLinea = getAccesorios(categoria).some(a => a.esLinea)
+    if (tieneLinea && accesorios.linea && !lineaNumero) {
       showToast("Ingresa el número de la línea", "warning")
       return false
     }
@@ -80,6 +79,11 @@ export default function AssetForm({ onClose, onGuardar }) {
         }
       : null
 
+    const tieneLinea = getAccesorios(categoria).some(a => a.esLinea)
+    const lineaData = tieneLinea && accesorios.linea
+      ? { lineaNumero, lineaPlan }
+      : {}
+
     setGuardando(true)
     try {
       await onGuardar({
@@ -91,17 +95,15 @@ export default function AssetForm({ onClose, onGuardar }) {
         estado,
         observaciones: observaciones || null,
         precio: precio || null,
-        accesorios: {
-          ...accesorios,
-          lineaNumero: accesorios.linea ? lineaNumero : null,
-          lineaPlan: accesorios.linea ? lineaPlan : null,
-        },
+        accesorios: { ...accesorios, ...lineaData },
         propietarioActual,
       })
     } finally {
       setGuardando(false)
     }
   }
+
+  const itemsAccesorios = getAccesorios(categoria)
 
   return (
     <div className="modal-overlay">
@@ -112,6 +114,7 @@ export default function AssetForm({ onClose, onGuardar }) {
         </div>
 
         <div className="modal-body">
+          {/* Información básica */}
           <div className="form-section">
             <div className="form-row">
               <input className="form-input" placeholder="Serial *" value={serial} onChange={e => setSerial(e.target.value)} />
@@ -120,8 +123,19 @@ export default function AssetForm({ onClose, onGuardar }) {
             <div className="form-row">
               <select className="form-input" value={categoria} onChange={e => setCategoria(e.target.value)}>
                 <option value="">Categoría *</option>
-                <option>Celular</option><option>Laptop</option><option>PC</option>
-                <option>Tablet</option><option>Monitor</option><option>Otro</option>
+                <optgroup label="Tecnología">
+                  <option>Celular</option>
+                  <option>Laptop</option>
+                  <option>PC</option>
+                  <option>Tablet</option>
+                  <option>Monitor</option>
+                </optgroup>
+                <optgroup label="Herramientas">
+                  <option>Taladro</option>
+                  <option>Rotomartillo</option>
+                  <option value="Herramienta eléctrica">Herramienta eléctrica</option>
+                </optgroup>
+                <option>Otro</option>
               </select>
               <input className="form-input" placeholder="Marca *" value={marca} onChange={e => setMarca(e.target.value)} />
             </div>
@@ -143,32 +157,53 @@ export default function AssetForm({ onClose, onGuardar }) {
             <textarea className="form-input form-textarea" placeholder="Observaciones (opcional)" value={observaciones} onChange={e => setObservaciones(e.target.value)} />
           </div>
 
-          <div className="form-section">
-            <p className="section-label">Accesorios</p>
-            <div className="accesorios-grid">
-              {Object.keys(accesorios).map(a => (
-                <div key={a} className="accesorio-item">
-                  <label>
-                    <input type="checkbox" checked={accesorios[a]} onChange={() => toggleAccesorio(a)} />
-                    {ACCESORIO_LABELS[a]}
-                  </label>
-                  {a === "linea" && accesorios.linea && (
-                    <div className="linea-extra">
-                      <input className="form-input" placeholder="Número de línea" value={lineaNumero} onChange={e => setLineaNumero(e.target.value)} />
-                      <label>
-                        <input type="checkbox" checked={lineaPlan} onChange={e => setLineaPlan(e.target.checked)} />
-                        Con plan
-                      </label>
-                    </div>
-                  )}
-                </div>
-              ))}
+          {/* Accesorios dinámicos por categoría */}
+          {itemsAccesorios.length > 0 && (
+            <div className="form-section">
+              <p className="section-label">Accesorios</p>
+              <div className="accesorios-grid">
+                {itemsAccesorios.map(({ key, label, esLinea }) => (
+                  <div key={key} className={`accesorio-item${esLinea && accesorios[key] ? " accesorio-item--expanded" : ""}`}>
+                    <label>
+                      <input
+                        type="checkbox"
+                        checked={accesorios[key] ?? false}
+                        onChange={() => toggleAccesorio(key)}
+                      />
+                      {label}
+                    </label>
+                    {esLinea && accesorios[key] && (
+                      <div className="linea-extra">
+                        <input
+                          className="form-input"
+                          placeholder="Número de línea"
+                          value={lineaNumero}
+                          onChange={e => setLineaNumero(e.target.value)}
+                        />
+                        <label>
+                          <input
+                            type="checkbox"
+                            checked={lineaPlan}
+                            onChange={e => setLineaPlan(e.target.checked)}
+                          />
+                          Con plan
+                        </label>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
 
+          {/* Propietario */}
           <div className="form-section">
             <label className="checkbox-label">
-              <input type="checkbox" checked={asignarPropietario} onChange={e => setAsignarPropietario(e.target.checked)} />
+              <input
+                type="checkbox"
+                checked={asignarPropietario}
+                onChange={e => setAsignarPropietario(e.target.checked)}
+              />
               Asignar propietario ahora
             </label>
             {asignarPropietario && (
@@ -189,7 +224,11 @@ export default function AssetForm({ onClose, onGuardar }) {
       </div>
 
       {modalFirmaAbierto && (
-        <ModalFirma onClose={() => { setModalFirmaAbierto(false); setGuardando(false) }} onSave={guardar} precio={precio} />
+        <ModalFirma
+          onClose={() => { setModalFirmaAbierto(false); setGuardando(false) }}
+          onSave={guardar}
+          precio={precio}
+        />
       )}
     </div>
   )

@@ -21,7 +21,7 @@ export default function Home() {
   return (
     <div className="home-wrapper">
       <nav className="home-nav">
-        <span className="nav-title">🖥️ IT Assets · Porceramica</span>
+        <span className="nav-title">📦 Gestión de Activos · Porceramica</span>
         <button className="nav-btn-nuevo" onClick={() => setModalAbierto(true)}>
           + Nuevo activo
         </button>
