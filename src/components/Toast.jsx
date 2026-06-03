@@ -1,20 +1,25 @@
 // src/components/Toast.jsx
-import { useState, useCallback, useRef } from "react"
+import { useState, useCallback, useRef, useEffect } from "react"
 import { ToastContext } from "./useToast"
 import "./Toast.css"
+
+const ICONS = { success: "✅", error: "❌", warning: "⚠️" }
 
 export function ToastProvider({ children }) {
   const [toasts, setToasts] = useState([])
   const resolversRef = useRef({})
+  const timersRef = useRef({})
 
   const removeToast = useCallback((id) => {
+    clearTimeout(timersRef.current[id])
+    delete timersRef.current[id]
     setToasts(prev => prev.filter(t => t.id !== id))
   }, [])
 
   const showToast = useCallback((message, type = "success") => {
     const id = Date.now() + Math.random()
     setToasts(prev => [...prev, { id, message, type }])
-    setTimeout(() => removeToast(id), 4000)
+    timersRef.current[id] = setTimeout(() => removeToast(id), 4000)
   }, [removeToast])
 
   const showConfirm = useCallback((message) => {
@@ -31,7 +36,12 @@ export function ToastProvider({ children }) {
     removeToast(id)
   }, [removeToast])
 
-  const ICONS = { success: "✅", error: "❌", warning: "⚠️" }
+  useEffect(() => {
+    return () => {
+      Object.values(resolversRef.current).forEach(resolve => resolve(false))
+      resolversRef.current = {}
+    }
+  }, [])
 
   return (
     <ToastContext.Provider value={{ showToast, showConfirm }}>

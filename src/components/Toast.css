@@ -31,7 +31,7 @@
 .toast-success { background: #d1e7dd; color: #0a3622; border-left: 4px solid #28a745; }
 .toast-error   { background: #f8d7da; color: #58151c; border-left: 4px solid #dc3545; }
 .toast-warning { background: #fff3cd; color: #664d03; border-left: 4px solid #ffc107; }
-.toast-confirm { background: #ffffff; color: #1a1a2e; border-left: 4px solid #0d6efd; border: 1px solid #e9ecef; }
+.toast-confirm { background: #ffffff; color: #1a1a2e; border: 1px solid #e9ecef; border-left: 4px solid #0d6efd; }
 
 .toast-confirm-content {
   display: flex;

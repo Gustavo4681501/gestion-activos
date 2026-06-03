@@ -18,7 +18,8 @@ export const crearActivo = async data => {
       creadoEn: Timestamp.now(),
       historial_propietarios: [data.propietarioActual],
     })
-  } catch {
+  } catch (e) {
+    console.error("[activos.service] crearActivo:", e)
     throw new Error("No se pudo registrar el activo")
   }
 }
@@ -27,7 +28,8 @@ export const obtenerActivos = async () => {
   try {
     const snap = await getDocs(collection(db, "activos"))
     return snap.docs.map(d => ({ id: d.id, ...d.data() }))
-  } catch {
+  } catch (e) {
+    console.error("[activos.service] obtenerActivos:", e)
     throw new Error("No se pudieron cargar los activos")
   }
 }
@@ -38,6 +40,7 @@ export const obtenerActivo = async id => {
     if (!snap.exists()) throw new Error("Activo no encontrado")
     return { id: snap.id, ...snap.data() }
   } catch (e) {
+    console.error("[activos.service] obtenerActivo:", e)
     throw new Error(e.message || "No se pudo cargar el activo")
   }
 }
@@ -46,6 +49,7 @@ export const agregarPropietario = async (activoId, propietarioData) => {
   try {
     const ref = doc(db, "activos", activoId)
     const snap = await getDoc(ref)
+    if (!snap.exists()) throw new Error("Activo no encontrado")
     const activo = snap.data()
     await updateDoc(ref, {
       propietarioActual: propietarioData,
@@ -55,7 +59,8 @@ export const agregarPropietario = async (activoId, propietarioData) => {
       ],
       ultimaActualizacion: Timestamp.now(),
     })
-  } catch {
+  } catch (e) {
+    console.error("[activos.service] agregarPropietario:", e)
     throw new Error("No se pudo asignar el propietario")
   }
 }
@@ -67,7 +72,8 @@ export const actualizarActivo = async (activoId, datosActualizados) => {
       ...datosActualizados,
       ultimaActualizacion: Timestamp.now(),
     })
-  } catch {
+  } catch (e) {
+    console.error("[activos.service] actualizarActivo:", e)
     throw new Error("No se pudieron guardar los cambios")
   }
 }
@@ -75,7 +81,8 @@ export const actualizarActivo = async (activoId, datosActualizados) => {
 export const eliminarActivo = async id => {
   try {
     await deleteDoc(doc(db, "activos", id))
-  } catch {
+  } catch (e) {
+    console.error("[activos.service] eliminarActivo:", e)
     throw new Error("No se pudo eliminar el activo")
   }
 }
