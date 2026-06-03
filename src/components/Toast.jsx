@@ -56,3 +56,6 @@ export function ToastProvider({ children }) {
     </ToastContext.Provider>
   )
 }
+
+// eslint-disable-next-line react-refresh/only-export-components
+export { useToast } from "./useToast"
