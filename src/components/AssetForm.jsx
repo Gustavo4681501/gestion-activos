@@ -59,8 +59,10 @@ export default function AssetForm({ onClose, onGuardar }) {
   }
 
   const handleSubmit = async () => {
+    if (guardando) return
     if (!validar()) return
     if (asignarPropietario) {
+      setGuardando(true)
       setModalFirmaAbierto(true)
     } else {
       await guardar(null)
@@ -187,7 +189,7 @@ export default function AssetForm({ onClose, onGuardar }) {
       </div>
 
       {modalFirmaAbierto && (
-        <ModalFirma onClose={() => setModalFirmaAbierto(false)} onSave={guardar} precio={precio} />
+        <ModalFirma onClose={() => { setModalFirmaAbierto(false); setGuardando(false) }} onSave={guardar} precio={precio} />
       )}
     </div>
   )

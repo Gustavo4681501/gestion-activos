@@ -12,6 +12,8 @@ import { useToast } from "../../components/Toast"
 import { ESTADO_LABELS } from "../../utils/estados"
 import "./ActivoDetallePage.css"
 
+const ACCESORIO_BOOL_KEYS = ["estuche", "bateria", "cable", "temperado", "cargador", "linea"]
+
 export default function ActivoDetallePage() {
   const { id } = useParams()
   const navigate = useNavigate()
@@ -54,7 +56,7 @@ export default function ActivoDetallePage() {
       await actualizarActivo(id, { estado, precio, observaciones })
       setEditandoDatos(false)
       showToast("Datos actualizados correctamente", "success")
-      cargarActivo()
+      await cargarActivo()
     } catch (e) {
       showToast(e.message, "error")
     } finally {
@@ -74,7 +76,7 @@ export default function ActivoDetallePage() {
       })
       setEditandoAccesorios(false)
       showToast("Accesorios actualizados correctamente", "success")
-      cargarActivo()
+      await cargarActivo()
     } catch (e) {
       showToast(e.message, "error")
     } finally {
@@ -103,7 +105,7 @@ export default function ActivoDetallePage() {
       setNombreInput("")
       setIdInput("")
       showToast("Propietario asignado correctamente", "success")
-      cargarActivo()
+      await cargarActivo()
     } catch (e) {
       showToast(e.message, "error")
     }
@@ -184,7 +186,7 @@ export default function ActivoDetallePage() {
           {editandoAccesorios ? (
             <>
               <div className="accesorios-grid">
-                {Object.keys(accesorios).map(a => (
+                {ACCESORIO_BOOL_KEYS.filter(a => a in accesorios).map(a => (
                   <div key={a} style={{ display: "flex", flexDirection: "column" }}>
                     <label>
                       <input type="checkbox" checked={accesorios[a]} onChange={() => setAccesorios(p => ({ ...p, [a]: !p[a] }))} />
@@ -217,7 +219,7 @@ export default function ActivoDetallePage() {
           <h5>Asignar propietario</h5>
           <input className="form-input" placeholder="Nombre *" value={nombreInput} onChange={e => setNombreInput(e.target.value)} />
           <input className="form-input" placeholder="Identificación (opcional)" value={idInput} onChange={e => setIdInput(e.target.value)} />
-          <button onClick={abrirFirma}>Firmar y asignar</button>
+          <button onClick={abrirFirma} disabled={loading} className="btn btn-success">Firmar y asignar</button>
         </div>
 
         {modalAbierto && (
