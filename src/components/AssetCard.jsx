@@ -24,8 +24,11 @@ export default function AssetCard({ activo, onEliminar }) {
           <span>📱 {activo.accesorios.lineaNumero} {activo.accesorios.lineaPlan ? "(Con plan)" : "(Sin plan)"}</span>
         )}
       </div>
-      <div className="asset-card-footer" onClick={e => e.stopPropagation()}>
-        <button className="btn-eliminar" onClick={() => onEliminar(activo.id)}>
+      <div className="asset-card-footer">
+        <button
+          className="btn-eliminar"
+          onClick={e => { e.stopPropagation(); onEliminar(activo.id) }}
+        >
           Eliminar
         </button>
       </div>

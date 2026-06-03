@@ -1,13 +1,9 @@
 // src/components/SearchBar.jsx
+import { ESTADO_LABELS } from "../utils/estados"
 
 const ESTADOS = [
-  { value: "",              label: "Todos los estados" },
-  { value: "asignado",      label: "Asignado" },
-  { value: "en_bodega",     label: "En bodega" },
-  { value: "danado",        label: "Dañado" },
-  { value: "en_reparacion", label: "En reparación" },
-  { value: "baja",          label: "Baja" },
-  { value: "reservado",     label: "Reservado" },
+  { value: "", label: "Todos los estados" },
+  ...Object.entries(ESTADO_LABELS).map(([value, label]) => ({ value, label })),
 ]
 
 const CATEGORIAS = [
@@ -21,7 +17,7 @@ const CATEGORIAS = [
 ]
 
 export default function SearchBar({ filtros, onFiltrosChange, total }) {
-  const hayFiltros = filtros.busqueda || filtros.estado || filtros.categoria
+  const hayFiltros = filtros.busqueda !== "" || filtros.estado !== "" || filtros.categoria !== ""
 
   return (
     <div className="search-bar">

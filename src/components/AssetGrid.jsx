@@ -12,7 +12,7 @@ function SkeletonCard() {
   )
 }
 
-export default function AssetGrid({ activos, loading, onEliminar, onLimpiarFiltros, hayFiltrosActivos }) {
+export default function AssetGrid({ activos = [], loading, onEliminar, onLimpiarFiltros, hayFiltrosActivos }) {
   if (loading) {
     return (
       <div className="asset-grid">
