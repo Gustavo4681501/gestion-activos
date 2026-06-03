@@ -1,0 +1,28 @@
+/* src/index.css */
+:root {
+  --color-primary: #0d6efd;
+  --color-primary-dark: #0b5ed7;
+  --color-success: #28a745;
+  --color-info: #0dcaf0;
+  --color-warning: #ffc107;
+  --color-danger: #dc3545;
+  --color-muted: #6c757d;
+  --color-bg: #f8f9fa;
+  --color-card: #ffffff;
+  --color-border: #e9ecef;
+  --shadow-card: 0 2px 6px rgba(0, 0, 0, 0.06);
+  --shadow-card-hover: 0 6px 16px rgba(0, 0, 0, 0.1);
+  --radius-card: 10px;
+  --radius-input: 8px;
+  --radius-btn: 8px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--color-bg);
+  font-family: 'Segoe UI', sans-serif;
+  margin: 0;
+}
