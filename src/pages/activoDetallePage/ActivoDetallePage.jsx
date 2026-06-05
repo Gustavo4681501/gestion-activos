@@ -37,7 +37,6 @@ export default function ActivoDetallePage() {
   // Préstamos
   const [prestamoNombre, setPrestamoNombre] = useState("")
   const [prestamoId, setPrestamoId] = useState("")
-  const [prestamoFechaEsperada, setPrestamoFechaEsperada] = useState("")
   const [prestamoObservaciones, setPrestamoObservaciones] = useState("")
   const [mostrarFormDevolucion, setMostrarFormDevolucion] = useState(false)
   const [notasDevolucion, setNotasDevolucion] = useState("")
@@ -128,14 +127,10 @@ export default function ActivoDetallePage() {
       await registrarPrestamo(id, {
         nombre: prestamoNombre.trim(),
         identificacion: prestamoId.trim() || null,
-        fechaDevolucionEsperada: prestamoFechaEsperada
-          ? Timestamp.fromDate(new Date(prestamoFechaEsperada + "T12:00:00"))
-          : null,
         observaciones: prestamoObservaciones.trim() || null,
       })
       setPrestamoNombre("")
       setPrestamoId("")
-      setPrestamoFechaEsperada("")
       setPrestamoObservaciones("")
       showToast("Préstamo registrado correctamente", "success")
       await cargarActivo()
@@ -330,18 +325,14 @@ export default function ActivoDetallePage() {
         {/* ===== PRÉSTAMOS ===== */}
         {(() => {
           const prestamo = activo.prestamoActivo
-          const ahora = new Date()
-          const esVencido = prestamo?.fechaDevolucionEsperada &&
-            prestamo.fechaDevolucionEsperada.toDate() < ahora
-
           return (
             <>
               {/* Banner préstamo activo */}
               {prestamo ? (
-                <div className={`prestamo-banner ${esVencido ? "vencido" : "activo"}`}>
+                <div className="prestamo-banner activo">
                   <div className="prestamo-banner-header">
-                    <span className={`prestamo-badge ${esVencido ? "vencido" : "activo"}`}>
-                      {esVencido ? "⚠️ Préstamo vencido" : "📤 Préstamo activo"}
+                    <span className="prestamo-badge activo">
+                      📤 Préstamo activo
                     </span>
                     {!mostrarFormDevolucion && (
                       <button
@@ -364,14 +355,6 @@ export default function ActivoDetallePage() {
                       <small>Fecha de préstamo</small>
                       <span>{prestamo.fechaPrestamo?.toDate().toLocaleDateString("es-CR", { day: "2-digit", month: "short", year: "numeric" })}</span>
                     </div>
-                    {prestamo.fechaDevolucionEsperada && (
-                      <div className="prestamo-dato">
-                        <small>Devolución esperada</small>
-                        <span style={{ color: esVencido ? "#dc3545" : "inherit", fontWeight: esVencido ? 700 : 400 }}>
-                          {prestamo.fechaDevolucionEsperada.toDate().toLocaleDateString("es-CR", { day: "2-digit", month: "short", year: "numeric" })}
-                        </span>
-                      </div>
-                    )}
                     {prestamo.observaciones && (
                       <div className="prestamo-dato">
                         <small>Observaciones</small>
@@ -379,13 +362,6 @@ export default function ActivoDetallePage() {
                       </div>
                     )}
                   </div>
-
-                  {esVencido && (
-                    <div className="prestamo-vencido-alerta">
-                      ⚠️ Este activo debió devolverse hace{" "}
-                      {Math.floor((ahora - prestamo.fechaDevolucionEsperada.toDate()) / 86400000)} día(s)
-                    </div>
-                  )}
 
                   {mostrarFormDevolucion && (
                     <div className="prestamo-devolucion-form">
@@ -437,18 +413,6 @@ export default function ActivoDetallePage() {
                       />
                     </div>
                     <div className="form-row">
-                      <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-                        <label style={{ fontSize: "0.78rem", color: "var(--color-muted)", fontWeight: 600 }}>
-                          Fecha de devolución esperada
-                        </label>
-                        <input
-                          type="date"
-                          className="form-input"
-                          value={prestamoFechaEsperada}
-                          min={new Date().toISOString().split("T")[0]}
-                          onChange={e => setPrestamoFechaEsperada(e.target.value)}
-                        />
-                      </div>
                       <textarea
                         className="form-input"
                         placeholder="Observaciones (opcional)"
