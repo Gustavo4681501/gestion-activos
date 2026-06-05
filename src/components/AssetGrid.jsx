@@ -1,4 +1,4 @@
-// src/components/AssetGrid.jsx
+import { FiInbox } from "react-icons/fi"
 import AssetCard from "./AssetCard"
 
 function SkeletonCard() {
@@ -27,7 +27,7 @@ export default function AssetGrid({ activos = [], loading, onEliminar, onLimpiar
     return (
       <div className="asset-grid">
         <div className="empty-state">
-          <span className="empty-icon">📭</span>
+          <span className="empty-icon"><FiInbox size={40} /></span>
           {hayFiltrosActivos ? (
             <>
               <p>No se encontraron activos para esta búsqueda</p>

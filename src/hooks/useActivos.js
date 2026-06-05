@@ -12,7 +12,7 @@ export function useActivos() {
   const [loading, setLoading] = useState(true)
   const [filtros, setFiltrosState] = useState({ busqueda: "", estado: "", categoria: "" })
   const [debouncedBusqueda, setDebouncedBusqueda] = useState("")
-  const { showToast, showConfirm } = useToast()
+  const { showToast } = useToast()
 
   const cargar = useCallback(async () => {
     setLoading(true)
@@ -71,8 +71,6 @@ export function useActivos() {
   }, [cargar, showToast])
 
   const eliminar = useCallback(async (id) => {
-    const ok = await showConfirm("¿Eliminar este activo? Esta acción no se puede deshacer.")
-    if (!ok) return
     try {
       await eliminarActivoService(id)
       await cargar()
@@ -80,7 +78,7 @@ export function useActivos() {
     } catch (e) {
       showToast(e.message, "error")
     }
-  }, [cargar, showToast, showConfirm])
+  }, [cargar, showToast])
 
   return {
     activos,

@@ -64,7 +64,7 @@ export default function ModalFirma({ onClose, onSave, precio }) {
 
   const guardar = () => {
     if (!hayFirma) {
-      alert("⚠️ Debe realizar la firma")
+      alert("Debe realizar la firma")
       return
     }
     const dataURL = canvasRef.current.toDataURL("image/png")

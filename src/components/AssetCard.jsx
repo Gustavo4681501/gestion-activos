@@ -1,5 +1,5 @@
-// src/components/AssetCard.jsx
 import { useNavigate } from "react-router-dom"
+import { FiBox, FiHash, FiUser, FiSmartphone } from "react-icons/fi"
 import { ESTADO_LABELS, ESTADO_COLORS } from "../utils/estados"
 
 export default function AssetCard({ activo, onEliminar }) {
@@ -17,11 +17,11 @@ export default function AssetCard({ activo, onEliminar }) {
         </span>
       </div>
       <div className="asset-card-body">
-        <span>📦 {activo.categoria}</span>
-        <span>🔢 {activo.serialNumber}</span>
-        <span>👤 {activo.propietarioActual?.nombre ?? "Sin asignar"}</span>
+        <span><FiBox size={13} style={{ marginRight: 4 }} />{activo.categoria}</span>
+        <span><FiHash size={13} style={{ marginRight: 4 }} />{activo.serialNumber}</span>
+        <span><FiUser size={13} style={{ marginRight: 4 }} />{activo.propietarioActual?.nombre ?? "Sin asignar"}</span>
         {activo.accesorios?.linea && (
-          <span>📱 {activo.accesorios.lineaNumero} {activo.accesorios.lineaPlan ? "(Con plan)" : "(Sin plan)"}</span>
+          <span><FiSmartphone size={13} style={{ marginRight: 4 }} />{activo.accesorios.lineaNumero} {activo.accesorios.lineaPlan ? "(Con plan)" : "(Sin plan)"}</span>
         )}
       </div>
       <div className="asset-card-footer">

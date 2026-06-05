@@ -1,6 +1,7 @@
 // src/pages/activoDetallePage/ActivoDetallePage.jsx
 import { useEffect, useState, useCallback } from "react"
 import { useParams, useNavigate } from "react-router-dom"
+import { FiArrowLeft, FiEdit2, FiUpload, FiDownload, FiCheckCircle } from "react-icons/fi"
 import { Timestamp } from "firebase/firestore"
 import {
   obtenerActivo,
@@ -172,7 +173,7 @@ export default function ActivoDetallePage() {
   return (
     <div className="detalle-wrapper">
       <div className="detalle-breadcrumb">
-        <button className="btn-volver" onClick={() => navigate(-1)}>← Volver</button>
+        <button className="btn-volver" onClick={() => navigate(-1)}><FiArrowLeft size={15} style={{ marginRight: 4 }} />Volver</button>
         <span className="breadcrumb-text">
           Gestión de Activos / <strong>{activo.marca} {activo.modelo}</strong>
         </span>
@@ -199,7 +200,7 @@ export default function ActivoDetallePage() {
         <div className="card-detalle">
           <div className="section-header">
             <h4>Datos del activo</h4>
-            <button className="btn btn-outline-primary btn-sm" onClick={() => setEditandoDatos(!editandoDatos)}>✏️ Editar</button>
+            <button className="btn btn-outline-primary btn-sm" onClick={() => setEditandoDatos(!editandoDatos)}><FiEdit2 size={13} style={{ marginRight: 4 }} />Editar</button>
           </div>
           {editandoDatos ? (
             <>
@@ -332,7 +333,7 @@ export default function ActivoDetallePage() {
                 <div className="prestamo-banner activo">
                   <div className="prestamo-banner-header">
                     <span className="prestamo-badge activo">
-                      📤 Préstamo activo
+                      <FiUpload size={13} style={{ marginRight: 5 }} />Préstamo activo
                     </span>
                     {!mostrarFormDevolucion && (
                       <button
@@ -340,7 +341,7 @@ export default function ActivoDetallePage() {
                         onClick={() => setMostrarFormDevolucion(true)}
                         disabled={loading}
                       >
-                        ✅ Registrar devolución
+                        <FiCheckCircle size={14} style={{ marginRight: 5 }} />Registrar devolución
                       </button>
                     )}
                   </div>
@@ -427,7 +428,7 @@ export default function ActivoDetallePage() {
                       disabled={loading}
                       style={{ alignSelf: "flex-start" }}
                     >
-                      📤 Registrar préstamo
+                      <FiUpload size={14} style={{ marginRight: 6 }} />Registrar préstamo
                     </button>
                   </div>
                 </div>
@@ -450,8 +451,8 @@ export default function ActivoDetallePage() {
                               <div className="historial-prestamo-id">{p.identificacion}</div>
                             )}
                             <div className="historial-prestamo-fechas">
-                              <span>📤 {p.fechaPrestamo?.toDate().toLocaleDateString("es-CR")}</span>
-                              <span>📥 {p.fechaDevolucion?.toDate().toLocaleDateString("es-CR")}</span>
+                              <span><FiUpload size={12} style={{ marginRight: 4 }} />{p.fechaPrestamo?.toDate().toLocaleDateString("es-CR")}</span>
+                              <span><FiDownload size={12} style={{ marginRight: 4 }} />{p.fechaDevolucion?.toDate().toLocaleDateString("es-CR")}</span>
                             </div>
                             {p.notasDevolucion && (
                               <div className="historial-prestamo-notas">"{p.notasDevolucion}"</div>

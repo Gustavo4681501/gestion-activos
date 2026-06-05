@@ -1,9 +1,13 @@
-// src/components/Toast.jsx
 import { useState, useCallback, useRef, useEffect } from "react"
+import { FiCheckCircle, FiXCircle, FiAlertTriangle, FiTrash2 } from "react-icons/fi"
 import { ToastContext } from "./useToast"
 import "./Toast.css"
 
-const ICONS = { success: "✅", error: "❌", warning: "⚠️" }
+const ICONS = {
+  success: <FiCheckCircle size={16} />,
+  error: <FiXCircle size={16} />,
+  warning: <FiAlertTriangle size={16} />,
+}
 
 export function ToastProvider({ children }) {
   const [toasts, setToasts] = useState([])
@@ -51,14 +55,14 @@ export function ToastProvider({ children }) {
           <div key={t.id} className={`toast toast-${t.type}`}>
             {t.type === "confirm" ? (
               <div className="toast-confirm-content">
-                <span>🗑️ {t.message}</span>
+                <span><FiTrash2 size={16} style={{ marginRight: 6 }} />{t.message}</span>
                 <div className="toast-confirm-actions">
                   <button onClick={() => handleConfirm(t.id, true)}>Confirmar</button>
                   <button onClick={() => handleConfirm(t.id, false)}>Cancelar</button>
                 </div>
               </div>
             ) : (
-              <span>{ICONS[t.type]} {t.message}</span>
+              <span style={{ display: "flex", alignItems: "center", gap: 6 }}>{ICONS[t.type]} {t.message}</span>
             )}
           </div>
         ))}

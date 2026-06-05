@@ -1,5 +1,6 @@
 // src/components/AssetForm.jsx
 import { useState, useEffect } from "react"
+import { FiX, FiEdit } from "react-icons/fi"
 import ModalFirma from "./ModalFirma"
 import { useToast } from "./Toast"
 import { getAccesorios, getAccesoriosInicial } from "../utils/accesorios"
@@ -110,7 +111,7 @@ export default function AssetForm({ onClose, onGuardar }) {
       <div className="modal-box">
         <div className="modal-header">
           <h5>Registrar nuevo activo</h5>
-          <button className="modal-close" onClick={onClose}>✕</button>
+          <button className="modal-close" onClick={onClose}><FiX size={18} /></button>
         </div>
 
         <div className="modal-body">
@@ -218,7 +219,7 @@ export default function AssetForm({ onClose, onGuardar }) {
         <div className="modal-footer">
           <button className="btn-secondary" onClick={onClose}>Cancelar</button>
           <button className="btn-primary" onClick={handleSubmit} disabled={guardando}>
-            {asignarPropietario ? "Continuar con firma ✍️" : "Guardar activo"}
+            {asignarPropietario ? <><FiEdit size={14} style={{ marginRight: 6 }} />Continuar con firma</> : "Guardar activo"}
           </button>
         </div>
       </div>

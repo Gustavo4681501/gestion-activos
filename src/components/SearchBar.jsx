@@ -1,4 +1,4 @@
-// src/components/SearchBar.jsx
+import { FiSearch, FiX } from "react-icons/fi"
 import { ESTADO_LABELS } from "../utils/estados"
 
 const ESTADOS = [
@@ -24,12 +24,15 @@ export default function SearchBar({ filtros, onFiltrosChange, total }) {
 
   return (
     <div className="search-bar">
-      <input
-        className="search-input"
-        placeholder="🔍  Buscar por serial, marca, modelo o propietario..."
-        value={filtros.busqueda}
-        onChange={e => onFiltrosChange({ busqueda: e.target.value })}
-      />
+      <div className="search-input-wrapper">
+        <FiSearch className="search-icon" size={15} />
+        <input
+          className="search-input"
+          placeholder="Buscar por serial, marca, modelo o propietario..."
+          value={filtros.busqueda}
+          onChange={e => onFiltrosChange({ busqueda: e.target.value })}
+        />
+      </div>
       <select
         className="search-select"
         value={filtros.estado}
@@ -53,7 +56,7 @@ export default function SearchBar({ filtros, onFiltrosChange, total }) {
           className="btn-limpiar"
           onClick={() => onFiltrosChange({ busqueda: "", estado: "", categoria: "" })}
         >
-          ✕ Limpiar
+          <FiX size={13} style={{ marginRight: 4 }} />Limpiar
         </button>
       )}
       <span className="search-count">{total} resultado{total !== 1 ? "s" : ""}</span>

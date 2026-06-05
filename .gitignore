@@ -1,5 +1,24 @@
-# Logs
-logs
+# ===== DEPENDENCIAS =====
+node_modules/
+
+# ===== BUILD =====
+dist/
+dist-ssr/
+
+# ===== ENTORNO Y SECRETOS =====
+.env
+.env.*
+!.env.example
+
+# ===== FIREBASE =====
+.firebase/
+firebase-debug.log
+firestore-debug.log
+ui-debug.log
+database-debug.log
+
+# ===== LOGS =====
+logs/
 *.log
 npm-debug.log*
 yarn-debug.log*
@@ -7,18 +26,33 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-node_modules
-dist
-dist-ssr
-*.local
+# ===== WINDOWS =====
+*.stackdump
+Thumbs.db
+ehthumbs.db
+Desktop.ini
 
-# Editor directories and files
+# ===== MACOS =====
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# ===== EDITORES =====
 .vscode/*
 !.vscode/extensions.json
-.idea
-.DS_Store
+.idea/
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
+
+# ===== ARCHIVOS LOCALES =====
+*.local
+
+# ===== COBERTURA DE TESTS =====
+coverage/
+
+# ===== CLAUDE CODE (local) =====
+.claude/settings.local.json
+.superpowers/
